@@ -1,0 +1,13 @@
+-npm init
+
+-install packages 
+ npm install express express-fileupload bcrypt cookie-parser nodemailer cors dotenv cloudinary jsonwebtoken mongoose
+
+ -create app.js  and server.js 
+ -setup .env
+ -to connect frontend and backend we use this middleware
+  app.use(cors)
+-add all middlewares
+
+
+ 
