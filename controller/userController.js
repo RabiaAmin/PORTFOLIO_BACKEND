@@ -2,7 +2,7 @@ import { catchAsyncErrors } from "../middleware/catchAsyncErrors.js";
 import ErrorHandler from "../middleware/error.js";
 import { User } from "../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
-import { generateJsonWEbToken } from "../utils/jwtToken.js";
+import { generateToken } from "../utils/jwtToken.js";
 
 export const register = catchAsyncErrors(async (req, res, next) => {
   if (!req.files || Object.keys(req.files).length === 0) {
@@ -71,5 +71,41 @@ export const register = catchAsyncErrors(async (req, res, next) => {
   })
 
 
-  generateJsonWEbToken(user,"user Registered!",201,res)
+  generateToken(user,"user Registered!",201,res)
+});
+
+
+
+export const login = catchAsyncErrors(async (req,res,next)=>{
+  const {email, password} = req.body;
+  if(!email || !password) {
+    return next(new ErrorHandler("Email & Password Are Required!"))
+  }
+
+  const user = await User.findOne({
+    email
+  }).select("+password");
+
+  if(!user){
+    return next(new ErrorHandler("Invalid Email Or Password!"))
+  }
+
+  const isPasswordMatched = await user.comparePassword(password);
+
+  if(!isPasswordMatched){
+    return next(new ErrorHandler("Invalid Email or Password!"))
+  }
+
+  generateToken(user, "LoggedIn",200,res);
+});
+
+
+export const logout = catchAsyncErrors(async (req,res,next)=>{
+  res.status(200).cookie("token","",{
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  }).json({
+    success: true,
+    message: "Loggout"
+  })
 });
