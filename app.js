@@ -8,6 +8,7 @@ import { errorMiddleware } from "./middleware/error.js";
 import userRoute from "./routes/userRoute.js"
 
 const app = express();
+
 dotenv.config({path: "./.env"});
 
 app.use(cors({

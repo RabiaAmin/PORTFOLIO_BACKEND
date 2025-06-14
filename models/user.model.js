@@ -76,10 +76,11 @@ userSchema.methods.comparePassword = async function(enteredPassword){
 }
 // GENERATING JSONWEBTOKEN
 userSchema.methods.generateJsonWEbToken =  function (){
-return jwt.sign({
-            _Id: this._id,
-            expiresIn: process.env.JWT_EXPIRES
-        },process.env.JWT_SECRET,)
+return jwt.sign(
+        { _id: this._id },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES }
+    );
 }
 
 

@@ -109,3 +109,85 @@ export const logout = catchAsyncErrors(async (req,res,next)=>{
     message: "Loggout"
   })
 });
+
+
+export const getUser = catchAsyncErrors(async (req,res,next)=>{
+   if (!req.user) {
+    return next(new ErrorHandler("User not authenticated", 401));
+  }
+
+  const user = await User.findById(req.user._id);
+
+  res.status(200).json({
+    success: true,
+    user
+  })
+});
+
+
+export const profileUpdate = catchAsyncErrors(async (req,res,nect)=>{
+  const newUserData = {
+    username : req.body.username,
+    email : req.body.email,
+    phone : req.body.phone,
+    aboutMe : req.body.aboutMe,
+    githubUrl : req.body.githubUrl,
+    instagramUrl : req.body.instagramUrl,
+    facebookUrl : req.body.facebookUrl,
+    linkedInUrl : req.body.linkedInUrl,
+  }
+
+  if(req.files && req.files.resume){
+    const avatar = req.files.avatar;
+    const user = await User.findById(req.user._id);
+    const profileImageId = user.avatar.public_id;
+    await cloudinary.uploader.destroy(profileImageId);
+
+    const cloudinaryResponse = await cloudinary.uploader.upload(
+      avatar.tempFilePath,
+      {
+       folder: "AVATARS",
+      }
+    );
+
+    newUserData.avatar = {
+      public_id: cloudinaryResponse.public_id,
+      url: cloudinaryResponse.secure_url,
+    }
+
+  }
+
+   if(req.files && req.files.resume){
+    const resume = req.files.resume;
+    const user = await User.findById(req.user._id);
+    const profileImageId = user.resume.public_id;
+    await cloudinary.uploader.destroy(profileImageId);
+
+    const cloudinaryResponse = await cloudinary.uploader.upload(
+      resume.tempFilePath,
+      {
+       folder: "RESUME",
+      }
+    );
+
+    newUserData.resume = {
+      public_id: cloudinaryResponse.public_id,
+      url: cloudinaryResponse.secure_url,
+    }
+
+  }
+
+
+  const user = await User.findByIdAndUpdate(req.user._id , newUserData , {
+    new : true,
+    runValidators: true,
+    useFindAndModify: false
+  })
+
+
+  res.status(200).json({
+    success: true,
+    message: "Profile Updated",
+    user
+  })
+})
