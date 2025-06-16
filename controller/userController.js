@@ -3,7 +3,8 @@ import ErrorHandler from "../middleware/error.js";
 import { User } from "../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import { generateToken } from "../utils/jwtToken.js";
-import {sendEmail} from "../utils/sendEmail.js"
+import {sendEmail} from "../utils/sendEmail.js";
+import crypto from "crypto";
 
 export const register = catchAsyncErrors(async (req, res, next) => {
   if (!req.files || Object.keys(req.files).length === 0) {
@@ -267,7 +268,7 @@ export const forgotPassword = catchAsyncErrors(async (req,res,next)=>{
 
 export const resetPassword = catchAsyncErrors(async (req,res,next)=>{
   const {token} = req.params;
-  const resetPasswordToken = crypto.creatHash("sha256").update(token).digest("hex");
+  const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
 
   const user = await User.findOne({
     resetPasswordToken,
