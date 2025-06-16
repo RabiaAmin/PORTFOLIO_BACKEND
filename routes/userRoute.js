@@ -1,5 +1,5 @@
 import express from "express";
-import {register,login,logout ,getUser,profileUpdate, updatePassword,getUserForPortfolio} from "../controller/userController.js"
+import {register,login,logout ,getUser,profileUpdate, updatePassword,getUserForPortfolio, forgotPassword,resetPassword} from "../controller/userController.js"
 import { isAuthenticated } from "../middleware/auth.js";
 
 
@@ -12,4 +12,8 @@ router.get("/getUser" , isAuthenticated, getUser);
 router.put("/update/profile",isAuthenticated,profileUpdate);
 router.put("/update/pawssord",isAuthenticated,updatePassword);
 router.get("/profile/portfolio" , getUserForPortfolio);
+
+router.post("/password/forgot",forgotPassword);
+router.put("/password/reset/:token",resetPassword);
+
 export default router;

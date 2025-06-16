@@ -3,6 +3,7 @@ import ErrorHandler from "../middleware/error.js";
 import { User } from "../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import { generateToken } from "../utils/jwtToken.js";
+import {sendEmail} from "../utils/sendEmail.js"
 
 export const register = catchAsyncErrors(async (req, res, next) => {
   if (!req.files || Object.keys(req.files).length === 0) {
@@ -227,4 +228,64 @@ export const getUserForPortfolio = catchAsyncErrors(async (req,res,next)=>{
     success:true,
     user,
   })
+});
+
+
+export const forgotPassword = catchAsyncErrors(async (req,res,next)=>{
+  const user = await User.findOne({email: req.body.email});
+  if(!user){
+    return next(new ErrorHandler("User Not Found" , 404))
+  }
+
+  const resetToken = user.getResetPasswordToken();
+
+  await user.save({validateBeforeSave: false});
+
+  const resetPasswordUrl = `${process.env.DASHBOARD_URL}/password/reset/${resetToken}`;
+
+  const message = `Your Reset Password Token is : \n \n ${resetPasswordUrl} \n \n If You'r Not Request For This Please Ignore It.`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Personal Portfolio Dashboard Recovery Password",
+      message,
+    });
+
+    res.status(200).json({
+      success:true,
+      message: `Email Sent  to ${user.email} Successfully!`
+    })
+  } catch (error) {
+    user.resetPasswordExpire = undefined;
+    user.resetPasswordToken = undefined;
+
+    await user.save();
+    return next(new ErrorHandler(error.message , 500));
+  }
+});
+
+export const resetPassword = catchAsyncErrors(async (req,res,next)=>{
+  const {token} = req.params;
+  const resetPasswordToken = crypto.creatHash("sha256").update(token).digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire : {$gt:Date.now()}
+  });
+
+  if(!user){
+    return next(new ErrorHandler("Reset Password Token Is Invalid or Has Been Expired!",400) )
+  }
+
+  if(req.body.password !== req.body.confirmPassword){
+    return next(new ErrorHandler("Password And ConfirmPassword Do Not Match!"))
+  }
+
+  user.password = req.body.password;
+  user.resetPasswordExpire=undefined;
+  user.resetPasswordToken= undefined;
+  await user.save();
+
+  generateToken(user, "Reset Password Successfully!",200,res);
 })
