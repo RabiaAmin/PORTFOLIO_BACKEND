@@ -5,7 +5,8 @@ import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import dbConnection from "./config/mongodb.js";
 import { errorMiddleware } from "./middleware/error.js";
-import userRoute from "./routes/userRoute.js"
+import userRoute from "./routes/userRoute.js";
+import userSkillRouter from "./routes/skillRoute.js"
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(fileUpload({
 }));
 
 app.use("/api/v1/user",userRoute);
+app.use("/api/v1/skill")
 
 dbConnection();
 app.use(errorMiddleware);
