@@ -7,7 +7,7 @@ import dbConnection from "./config/mongodb.js";
 import { errorMiddleware } from "./middleware/error.js";
 import userRoute from "./routes/userRoute.js";
 import userSkillRouter from "./routes/skillRoute.js"
-
+import userProjectRouter from "./routes/projectRoute.js"
 const app = express();
 
 dotenv.config({path: "./.env"});
@@ -29,7 +29,8 @@ app.use(fileUpload({
 }));
 
 app.use("/api/v1/user",userRoute);
-app.use("/api/v1/skill")
+app.use("/api/v1/skills",userSkillRouter);
+app.use("/api/v1/project",userProjectRouter);
 
 dbConnection();
 app.use(errorMiddleware);

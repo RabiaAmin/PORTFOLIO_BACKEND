@@ -1,7 +1,7 @@
-import { catchAsyncErrors } from "../middleware/catchAsyncErrors";
+import { catchAsyncErrors } from "../middleware/catchAsyncErrors.js";
 import ErrorHandler from "../middleware/error.js";
 import { Skills } from "../models/skills.model.js";
-import { v2 as cloudinary } from "cloudinary";
+
 
 export const addNewSkill = catchAsyncErrors(async(req,res,next)=>{
 const { category, skills } = req.body;
@@ -18,21 +18,57 @@ const { category, skills } = req.body;
 
   res.status(201).json({
     success: true,
-    message: "Skills added successfully",
+    message: "New Skill Added Successfully",
     skill: newSkill,
   });
 });
 
 export const deleteSkill = catchAsyncErrors(async(req,res,next)=>{
+const { id } = req.params;
 
+  const skill = await Skills.findById(id);
+
+  if (!skill) {
+    return next(new ErrorHandler("Skill not found", 404));
+  }
+
+  await skill.deleteOne();
+
+  res.status(200).json({
+    success: true,
+    message: "Skill deleted successfully",
+  });
 });
 
 export const updateSkill = catchAsyncErrors(async(req,res,next)=>{
+ const { id } = req.params;
+  const { category, skills } = req.body;
 
+ 
+
+  const updatedSkill = await Skills.findByIdAndUpdate(
+    id,
+    { category, skills },
+    { new: true, runValidators: true, useFindAndModify:false }
+  );
+
+   if (!updatedSkill) {
+    return next(new ErrorHandler("Skill not found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Skill updated successfully",
+    updatedSkill,
+  });
 });
 export const getAllSkill = catchAsyncErrors(async(req,res,next)=>{
-
-});
-export const getAllCategories = catchAsyncErrors(async(req,res,next)=>{
-
+ const skills = await Skills.find();
+if (!skills) {
+    return next(new ErrorHandler("Skills not found", 404));
+  }
+  res.status(200).json({
+    success: true,
+    skills,
+  });
 });

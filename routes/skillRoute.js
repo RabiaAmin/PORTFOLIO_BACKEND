@@ -4,7 +4,7 @@ import {
     deleteSkill,
     updateSkill,
     getAllSkill,
-    getAllCategories
+
 } from "../controller/skillController.js";
 import {isAuthenticated} from "../middleware/auth.js";
 
@@ -14,6 +14,6 @@ router.post("/add",isAuthenticated ,addNewSkill);
 router.post("/delete/:id",isAuthenticated,deleteSkill);
 router.put("/update/:id",isAuthenticated,updateSkill);
 router.get("/getall",getAllSkill);
-router.get("/categories", getAllCategories);
+
 
 export default router;

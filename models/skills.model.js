@@ -13,9 +13,5 @@ const skillSchema = new mongoose.Schema({
   ],
 });
 
-const SkillsDataSchema = new mongoose.Schema({
-  skillsData: [skillSchema],
-});
 
-
-export const Skills = mongoose.model("Skills", SkillsDataSchema);
+export const Skills = mongoose.model("Skills", skillSchema);
