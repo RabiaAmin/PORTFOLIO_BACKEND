@@ -127,7 +127,7 @@ export const getUser = catchAsyncErrors(async (req,res,next)=>{
 });
 
 
-export const profileUpdate = catchAsyncErrors(async (req,res,nect)=>{
+export const profileUpdate = catchAsyncErrors(async (req,res,next)=>{
   const newUserData = {
     username : req.body.username,
     email : req.body.email,
@@ -139,7 +139,7 @@ export const profileUpdate = catchAsyncErrors(async (req,res,nect)=>{
     linkedInUrl : req.body.linkedInUrl,
   }
 
-  if(req.files && req.files.resume){
+  if(req.files && req.files.avatar){
     const avatar = req.files.avatar;
     const user = await User.findById(req.user._id);
     const profileImageId = user.avatar.public_id;
@@ -180,17 +180,16 @@ export const profileUpdate = catchAsyncErrors(async (req,res,nect)=>{
   }
 
 
-  const user = await User.findByIdAndUpdate(req.user._id , newUserData , {
-    new : true,
+  const updatedUser = await User.findByIdAndUpdate(req.user._id, newUserData, {
+    new: true,
     runValidators: true,
-    useFindAndModify: false
-  })
+  });
 
 
   res.status(200).json({
     success: true,
     message: "Profile Updated",
-    user
+    updatedUser
   })
 });
 
