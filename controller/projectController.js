@@ -9,9 +9,10 @@ export const addNewProject = catchAsyncErrors(async (req, res, next) => {
   }
 
   const { image } = req.files;
-  const { title, Description, tags, demoUrl, gitHubUrl } = req.body;
+  const tags = JSON.parse(req.body.tags);
+  const { title, Description, demoUrl, gitHubUrl } = req.body;
 
-  if (!title || !Description || !tags || !demoUrl || !gitHubUrl) {
+  if (!title || !Description || !tags) {
     return next(new ErrorHandler("Please Provide All Details!",400));
   }
 
