@@ -60,6 +60,7 @@ const userSchema = new mongoose.Schema({
     instagramUrl: String,
     facebookUrl: String,
     linkedInUrl: String,
+    portfolioUrl: String,
     resetPasswordToken:String,
     resetPasswordExpire: Date, 
 })

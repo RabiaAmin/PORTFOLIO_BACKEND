@@ -49,6 +49,7 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     instagramUrl,
     facebookUrl,
     linkedInUrl,
+    portfolioUrl,
   } = req.body;
 
 
@@ -62,6 +63,7 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     instagramUrl,
     facebookUrl,
     linkedInUrl,
+    portfolioUrl,
     avatar:{
         public_id: cloudinaryResponseForAvatar.public_id,
         url: cloudinaryResponseForAvatar.secure_url
