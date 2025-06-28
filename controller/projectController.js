@@ -68,7 +68,7 @@ export const updateProject = catchAsyncErrors(async (req, res, next) => {
   const newProjectData = {
     title: req.body.title,
     Description: req.body.Description,
-    tags: req.body.tags,
+    tags: JSON.parse(req.body.tags),
     demoUrl: req.body.demoUrl,
     gitHubUrl: req.body.gitHubUrl,
   };
