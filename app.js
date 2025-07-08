@@ -13,7 +13,7 @@ const app = express();
 dotenv.config({path: "./.env"});
 
 app.use(cors({
-    origin:["http://localhost:5173",process.env.PORFOLIO_URL,process.env.DASHBOARD_URL],
+    origin:["http://localhost:5173",process.env.PORFOLIO_URL,process.env.DASHBOARD_URL, "file://"],
     methods: ['GET','POST','PUT','DELETE'],
     credentials: true,
 }));
